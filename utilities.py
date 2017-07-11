@@ -12,6 +12,7 @@ def input_text_pattern(window, text = ''):
     index = 0
     assert text_field.texts()[index] in text
 
+
 def input_text_pattern_CTRL_C(window, text = ''):
     text_field = window.edit
     text_field.type_keys(text, with_spaces=True)
