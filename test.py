@@ -28,7 +28,7 @@ class TestSuite(unittest.TestCase):
     #@unittest.skip('pass')
     def test_send_an_error_report(self):
         utilities.send_an_error_report(self.app, 'Description error message')
-        #time.sleep(1)
+        time.sleep(1)
 
     def test_set_printers_settings(self):
         utilities.change_dropdown_list(self.main_window)
