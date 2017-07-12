@@ -1,4 +1,5 @@
 import time
+from pywinauto.controls.uia_controls import TreeItemWrapper
 
 
 def default_view(window, name_edit='',
@@ -62,11 +63,6 @@ def description_error_view(window):
     send_button.verify_actionable()
 
 
-def set_default_reader(window):
-    window['...Button'].click()
-    # TODO opening file
-
-
 def input_text_pattern(window, text=''):
     text_field = window.edit
     text_field.type_keys(text, with_spaces=True)
@@ -88,7 +84,7 @@ def input_text_pattern_ctrl_c(window, text=''):
 # TODO raise exception if the program still runing
 def apply_settings(window):
     window.Apply.wait('active').click()
-    if window.is_process_running()is False:
+    if window.is_process_running() is True:
         print('Something wrong')
 
 
@@ -106,10 +102,71 @@ def send_error_confirmation_message(window):
     assert confirm_msg.Button.texts()[first_element] in 'OK'
 
 
-def change_dropdown_list(window):
-    print(window['Printer name:ComboBox'].ItemCount())
-    print(window['Printer name:ComboBox'].ItemTexts())
-    print(window['Printer name:ComboBox'].SelectedText())
-    window['Printer name:ComboBox'].Select('Fax')
-    # time.sleep(2)
-    assert window['Printer name:ComboBox'].SelectedText() in 'Fax'
+def select_printer(window, printer_name):
+    window['Printer name:ComboBox'].Select(printer_name)
+    assert window['Printer name:ComboBox'].SelectedText() in printer_name
+
+
+def select_paper_format(window, paper_format):
+    window['Paper format:ComboBox'].Select(paper_format)
+    assert window['Paper format:ComboBox'].SelectedText() in paper_format
+
+
+def select_duplex(window, duplex):
+    window['Duplex:ComboBox'].Select(duplex)
+    assert window['Duplex:ComboBox'].SelectedText() in duplex
+
+
+
+#TODO assert list of paper format
+def match_printer_settings(window):
+    select_printer(window, 'Microsoft XPS Document Writer')
+    if window['Printer name:ComboBox'].SelectedText() == 'Microsoft XPS Document Writer':
+
+        assert window['Paper source:ComboBox'].SelectedText() in 'Автовыбор'
+
+    select_printer(window, 'Microsoft Print to PDF')
+    if window['Printer name:ComboBox'].SelectedText() == 'Microsoft Print to PDF':
+        print(window['Printer name:ComboBox'].ItemTexts())
+        assert window['Paper source:ComboBox'].SelectedText() in ''
+
+    select_printer(window, 'Fax')
+    if window['Printer name:ComboBox'].SelectedText() == 'Fax':
+
+        assert window['Paper source:ComboBox'].SelectedText() in 'По умолчанию'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#TODO waiting for opening window
+def set_default_reader(window, app):
+    select_app = app['Select application']
+    window['...Button'].click()
+    time.sleep(1)
+    #select_app.print_control_identifiers()
+    #for elem in select_app['NamespaceTreeControl'].WrapperObject().sub_elements():
+    #   print(elem.text())
+    i = select_app['NamespaceTreeControl'].texts()
+    print(i)
+    #time.sleep(3)
+

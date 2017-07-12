@@ -2,6 +2,7 @@ import unittest
 from pywinauto.application import Application
 import time
 import utilities
+from pywinauto.application import ProcessNotFoundError as error
 
 
 class TestSuite(unittest.TestCase):
@@ -17,27 +18,28 @@ class TestSuite(unittest.TestCase):
         while True:
             if self.app.is_process_running() == True:
                 self.app.top_window().close()
+                #self.app.active_().close()
             else:
                 break
 
 
-    @unittest.skip('pass')
+    #@unittest.skip('pass')
     def test_0_default_view_first(self):
         utilities.default_view(self.main_window)
 
     #@unittest.skip('pass')
     def test_set_pdf_reader(self):
-        utilities.set_default_reader(self.main_window)
+        utilities.set_default_reader(self.main_window, self.app)
 
     #TODO
     @unittest.skip('pass')
     def test_set_printers_settings(self):
-        pass
+        utilities.select_printer('')
 
-    #TODO
+
     @unittest.skip('pass')
     def test_matching_paper_and_printer_settings(self):
-        pass
+        utilities.match_printer_settings(self.main_window)
 
     @unittest.skip('pass')
     def test_apply_setting_without_pdf_reader(self):
@@ -47,10 +49,10 @@ class TestSuite(unittest.TestCase):
     def test_apply_settings_without_text_pattern(self):
         pass
 
-    @unittest.skip('pass')
+    #@unittest.skip('pass')
     def test_first_launch(self):
         #self.main_window.print_control_identifiers()
-        utilities.set_default_reader(self.main_window)
+        utilities.set_default_reader(self.main_window, self.app)
         utilities.input_text_pattern(self.main_window, 'MetaData')
         utilities.apply_settings(self.main_window)
         # time.sleep(2)
@@ -60,24 +62,24 @@ class TestSuite(unittest.TestCase):
     def test_open_saved_setting(self):
         pass
 
-    @unittest.skip('pass')
+    #@unittest.skip('pass')
     def test_send_an_error_report(self):
         utilities.type_an_error_report(self.app, 'Test ')
         #self.app['Description Error'].Send.click()
-        utilities.send_error_confirmation_message(self.app)
+        #utilities.send_error_confirmation_message(self.app)
 
-    @unittest.skip('pass')
+    #@unittest.skip('pass')
     def test_send_an_empty_error_report(self):
         utilities.type_an_error_report(self.app)
         #self.app['Description Error'].Send.click()
-        utilities.send_error_confirmation_message()
+        #utilities.send_error_confirmation_message(self.app)
 
     # TODO scroll test
-    @unittest.skip('pass')
+    #@unittest.skip('pass')
     def test_scrolling_error_report(self):
         utilities.type_an_error_report(self.app, 'Test '*120)
 
-    @unittest.skip('pass')
+    #@unittest.skip('pass')
     def test_close_ALT_F4(self):
         self.main_window.close_alt_f4()
         assert self.app.is_process_running() is False
