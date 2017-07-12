@@ -2,10 +2,12 @@ import unittest
 from pywinauto.application import Application
 import time
 import utilities
-from pywinauto.application import ProcessNotFoundError as error
+from pywinauto.base_wrapper import ElementNotEnabled as Error
 
 
 class TestSuite(unittest.TestCase):
+    meta_data = 'MetaData'
+
 
     def setUp(self):
         self.app = Application(backend="win32").start(
@@ -34,26 +36,33 @@ class TestSuite(unittest.TestCase):
     #TODO
     @unittest.skip('pass')
     def test_set_printers_settings(self):
-        utilities.select_printer('')
+        pass
 
 
     @unittest.skip('pass')
     def test_matching_paper_and_printer_settings(self):
         utilities.match_printer_settings(self.main_window)
 
-    @unittest.skip('pass')
+    #@unittest.skip('pass')
     def test_apply_setting_without_pdf_reader(self):
-        pass
+        utilities.input_text_pattern(self.main_window, self.meta_data)
+        try:
+            self.main_window.Apply.verify_actionable()
+            self.fail('The Apply button is active')
+        except Error:
+            self.fail('The Apply button is inactive')
+
+
 
     @unittest.skip('pass')
     def test_apply_settings_without_text_pattern(self):
         pass
 
-    #@unittest.skip('pass')
+    @unittest.skip('pass')
     def test_first_launch(self):
         #self.main_window.print_control_identifiers()
         utilities.set_default_reader(self.main_window, self.app)
-        utilities.input_text_pattern(self.main_window, 'MetaData')
+        utilities.input_text_pattern(self.main_window, self.meta_data)
         utilities.apply_settings(self.main_window)
         # time.sleep(2)
 
