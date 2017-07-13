@@ -83,7 +83,7 @@ def input_text_pattern_ctrl_c(window, text=''):
 
 # TODO raise exception if the program still runing
 def apply_settings(window):
-    window.Apply.wait('active').click()
+    window.Apply.click()
     if window.is_process_running() is True:
         print('Something wrong')
 
@@ -120,19 +120,49 @@ def select_duplex(window, duplex):
 
 #TODO assert list of paper format
 def match_printer_settings(window):
+    xps_writer_items = ['Letter', 'Letter Small', 'Таблоид']
+    pdf_items = ['Letter', 'Таблоид', 'Legal']
+    fax_items = ['Letter', 'Letter Small', 'Legal']
+    xps_writer_amount = 107
+    pdf_amount = 10
+    fax_amount = 69
+
     select_printer(window, 'Microsoft XPS Document Writer')
     if window['Printer name:ComboBox'].SelectedText() == 'Microsoft XPS Document Writer':
-
+        iteration = 0
+        for element in window['Paper format:ComboBox'].ItemTexts():
+            #print(element)
+            assert element in xps_writer_items
+            iteration += 1
+            if iteration == 3:
+                break
+        assert window['Paper format:ComboBox'].ItemCount() == xps_writer_amount
         assert window['Paper source:ComboBox'].SelectedText() in 'Автовыбор'
 
     select_printer(window, 'Microsoft Print to PDF')
     if window['Printer name:ComboBox'].SelectedText() == 'Microsoft Print to PDF':
-        print(window['Printer name:ComboBox'].ItemTexts())
-        assert window['Paper source:ComboBox'].SelectedText() in ''
+        iteration = 0
+        for element in window['Paper format:ComboBox'].ItemTexts():
+            #print(element)
+            assert element in pdf_items
+            iteration += 1
+            if iteration == 3:
+                break
+
+        #window.print_control_identifiers()
+        assert window['Paper format:ComboBox'].ItemCount() == pdf_amount
+        #window['Paper source:ComboBox'].SelectedText()
 
     select_printer(window, 'Fax')
     if window['Printer name:ComboBox'].SelectedText() == 'Fax':
-
+        iteration = 0
+        for element in window['Paper format:ComboBox'].ItemTexts():
+            #print(element)
+            assert element in fax_items
+            iteration += 1
+            if iteration == 3:
+                break
+        assert window['Paper format:ComboBox'].ItemCount() == fax_amount
         assert window['Paper source:ComboBox'].SelectedText() in 'По умолчанию'
 
 
