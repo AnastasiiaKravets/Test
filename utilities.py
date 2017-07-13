@@ -25,7 +25,11 @@ def default_view(window, name_edit='',
     apply_button = window.Button2
     apply_button_text = 'Apply'
     open_button = window.Button3
+    window_widght = 438
+    window_height = 349
 
+    assert window.rectangle().width() == window_widght
+    assert window.rectangle().height() == window_height
     assert window.Settings.texts()[first_element] in settings_static
     assert window['Default PDF program'].texts()[first_element] in default_pdf_program_static
     assert window['Name:Static'].texts()[first_element] in name_static
@@ -40,7 +44,7 @@ def default_view(window, name_edit='',
     assert window['Paper format:Static'].texts()[first_element] in paper_format_static
     assert window['Paper format:ComboBox'].SelectedText() in paper_format_list
     assert window['Paper source:Static'].texts()[first_element] in paper_source_static
-    assert window['Paper source:ComboBox'].SelectedText() in paper_source_list
+    #assert window['Paper source:ComboBox'].SelectedText() in paper_source_list
     assert window['Duplex:Static'].texts()[first_element] in duplex_static
     assert window['Duplex:ComboBox'].SelectedText() in duplex_list
     assert apply_button.texts()[first_element] in apply_button_text
@@ -48,6 +52,7 @@ def default_view(window, name_edit='',
     send_error_button.verify_actionable()
     apply_button.verify_visible()
     open_button.verify_actionable()
+
 
 
 def description_error_view(window):
@@ -63,11 +68,14 @@ def description_error_view(window):
     send_button.verify_actionable()
 
 
+
 def input_text_pattern(window, text=''):
     text_field = window.edit
     text_field.type_keys(text, with_spaces=True)
     index = 0
     assert text_field.texts()[index] in text
+
+
 
 
 def input_text_pattern_ctrl_c(window, text=''):
@@ -81,11 +89,12 @@ def input_text_pattern_ctrl_c(window, text=''):
     assert text_field.texts()[index] in text
 
 
-# TODO raise exception if the program still runing
+
+
 def apply_settings(window):
-    window.Apply.click()
-    if window.is_process_running() is True:
-        print('Something wrong')
+    window.Apply.wait('enabled').click()
+   # if window.is_process_running() is True:
+   #     raise Exception("Apply button haven't closed the window")
 
 
 def type_an_error_report(window, error_text=''):
@@ -102,23 +111,19 @@ def send_error_confirmation_message(window):
     assert confirm_msg.Button.texts()[first_element] in 'OK'
 
 
+
 def select_printer(window, printer_name):
     window['Printer name:ComboBox'].Select(printer_name)
-    assert window['Printer name:ComboBox'].SelectedText() in printer_name
 
 
 def select_paper_format(window, paper_format):
     window['Paper format:ComboBox'].Select(paper_format)
-    assert window['Paper format:ComboBox'].SelectedText() in paper_format
 
 
 def select_duplex(window, duplex):
     window['Duplex:ComboBox'].Select(duplex)
-    assert window['Duplex:ComboBox'].SelectedText() in duplex
 
 
-
-#TODO assert list of paper format
 def match_printer_settings(window):
     xps_writer_items = ['Letter', 'Letter Small', 'Таблоид']
     pdf_items = ['Letter', 'Таблоид', 'Legal']
@@ -167,36 +172,18 @@ def match_printer_settings(window):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #TODO waiting for opening window
 def set_default_reader(window, app):
-    select_app = app['Select application']
     window['...Button'].click()
-    time.sleep(1)
+    select_app = app['Select application']
+    select_app.wait('ready', 5, 0.5)
+    path = "C:\FoxitReaderPortable\FoxitReaderPortable.exe"
     #select_app.print_control_identifiers()
     #for elem in select_app['NamespaceTreeControl'].WrapperObject().sub_elements():
     #   print(elem.text())
-    i = select_app['NamespaceTreeControl'].texts()
-    print(i)
+    #select_app['NamespaceTreeControl']['Видео'].select()
+    select_app.edit.type_keys(path)
+    select_app.OpenButton.click()
+
     #time.sleep(3)
 
