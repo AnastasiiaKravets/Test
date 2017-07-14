@@ -1,5 +1,8 @@
+from pywinauto.application import Application
 import time
-from pywinauto.controls.uia_controls import TreeItemWrapper
+from win32gui import GetForegroundWindow
+from pywinauto.timings import WaitUntilPasses
+
 
 
 def default_view(window, name_edit='',
@@ -25,8 +28,8 @@ def default_view(window, name_edit='',
     apply_button = window.Button2
     apply_button_text = 'Apply'
     open_button = window.Button3
-    window_widght = 438
-    window_height = 349
+    window_widght = 448
+    window_height = 359
 
     assert window.rectangle().width() == window_widght
     assert window.rectangle().height() == window_height
@@ -68,14 +71,11 @@ def description_error_view(window):
     send_button.verify_actionable()
 
 
-
 def input_text_pattern(window, text=''):
     text_field = window.edit
     text_field.type_keys(text, with_spaces=True)
     index = 0
     assert text_field.texts()[index] in text
-
-
 
 
 def input_text_pattern_ctrl_c(window, text=''):
@@ -89,12 +89,8 @@ def input_text_pattern_ctrl_c(window, text=''):
     assert text_field.texts()[index] in text
 
 
-
-# TODO check for closed app
 def apply_settings(window):
     window.Apply.wait('enabled').click()
-   # if window.is_process_running() is True:
-   #     raise Exception("Apply button haven't closed the window")
 
 
 def type_an_error_report(window, error_text=''):
@@ -103,15 +99,12 @@ def type_an_error_report(window, error_text=''):
     descr_error_window.edit.type_keys(error_text, with_spaces=True)
 
 
-# TODO asserting confirmation message
 def send_error_confirmation_message(window):
     confirm_msg = window.top_window()
     first_element = 0
-    print(confirm_msg.Static.texts())
-    print(confirm_msg.Button.texts())
-    assert confirm_msg.Static.texts()[first_element] in 'Message sent'
-    assert confirm_msg.Button.texts()[first_element] in 'OK'
-
+    assert confirm_msg.Static2.texts()[first_element] in 'Message sent.'
+    assert confirm_msg.Button.texts()[first_element]in 'ОК'
+    confirm_msg.Button.click()
 
 
 def select_printer(window, printer_name):
@@ -138,7 +131,6 @@ def match_printer_settings(window):
     if window['Printer name:ComboBox'].SelectedText() == 'Microsoft XPS Document Writer':
         iteration = 0
         for element in window['Paper format:ComboBox'].ItemTexts():
-            #print(element)
             assert element in xps_writer_items
             iteration += 1
             if iteration == 3:
@@ -150,13 +142,10 @@ def match_printer_settings(window):
     if window['Printer name:ComboBox'].SelectedText() == 'Microsoft Print to PDF':
         iteration = 0
         for element in window['Paper format:ComboBox'].ItemTexts():
-            #print(element)
             assert element in pdf_items
             iteration += 1
             if iteration == 3:
                 break
-
-        #window.print_control_identifiers()
         assert window['Paper format:ComboBox'].ItemCount() == pdf_amount
         #window['Paper source:ComboBox'].SelectedText()
 
@@ -164,7 +153,6 @@ def match_printer_settings(window):
     if window['Printer name:ComboBox'].SelectedText() == 'Fax':
         iteration = 0
         for element in window['Paper format:ComboBox'].ItemTexts():
-            #print(element)
             assert element in fax_items
             iteration += 1
             if iteration == 3:
@@ -174,18 +162,23 @@ def match_printer_settings(window):
 
 
 
-#TODO waiting for opening window
 def set_default_reader(window, app):
     window['...Button'].click()
+    WaitUntilPasses(10, 0.5, lambda: app.window_(title=u'Select application'))
     select_app = app['Select application']
-    select_app.wait('ready', 5, 0.5)
     path = "C:\FoxitReaderPortable\FoxitReaderPortable.exe"
-    #select_app.print_control_identifiers()
-    #for elem in select_app['NamespaceTreeControl'].WrapperObject().sub_elements():
-    #   print(elem.text())
-    #select_app['NamespaceTreeControl']['Видео'].select()
     select_app.edit.type_keys(path)
     select_app.OpenButton.click()
 
-    #time.sleep(3)
+    handle_pdf_redirect = GetForegroundWindow()
+    first_element = 0
+    time.sleep(1)
+    handle_reader = GetForegroundWindow()
+    if handle_reader != handle_pdf_redirect:
+        try:
+            temporary_app = Application().connect(handle=handle_reader)
+            if temporary_app.top_window().texts()[first_element] == 'Start - Foxit Reader':
+                temporary_app.top_window().close()
+        except:
+            pass
 
