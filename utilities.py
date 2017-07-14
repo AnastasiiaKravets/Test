@@ -166,8 +166,9 @@ def set_default_reader(window, app):
     window['...Button'].click()
     WaitUntilPasses(10, 0.5, lambda: app.window_(title=u'Select application'))
     select_app = app['Select application']
-    path = "C:\FoxitReaderPortable\FoxitReaderPortable.exe"
-    select_app.edit.type_keys(path)
+    path = "c:\Adobe\AcrobatReaderDC\Reader\AcroRd32.exe"
+    select_app.edit.type_keys(path, with_spaces=True)
+    time.sleep(5)
     select_app.OpenButton.click()
 
     handle_pdf_redirect = GetForegroundWindow()
@@ -177,7 +178,7 @@ def set_default_reader(window, app):
     if handle_reader != handle_pdf_redirect:
         try:
             temporary_app = Application().connect(handle=handle_reader)
-            if temporary_app.top_window().texts()[first_element] == 'Start - Foxit Reader':
+            if temporary_app.top_window().texts()[first_element] == 'Adobe Acrobat Reader DC':
                 temporary_app.top_window().close()
         except:
             pass

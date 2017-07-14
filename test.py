@@ -4,7 +4,7 @@ from pywinauto.application import Application
 import time
 import utilities
 from pywinauto.base_wrapper import ElementNotEnabled as Error
-from win32gui import GetForegroundWindow
+from win32gui import GetForegroundWindow, FindWindow
 from pywinauto.application import AppStartError
 from pywinauto.timings import WaitUntilPasses
 
@@ -14,7 +14,9 @@ class TestSuite_settings(unittest.TestCase):
     printer_xps = 'Microsoft XPS Document Writer'
     printer_pdf = 'Microsoft Print to PDF'
     printer_fax = 'Fax'
-    pdf_reader = 'FoxitReaderPortable'
+    pdf_reader = 'AcroRd32'
+
+
 
 
 
@@ -121,6 +123,13 @@ class TestSuite_settings(unittest.TestCase):
 
 
 class TestSuite_z_opening_file(unittest.TestCase):
+    def find_window(self, window):
+        for i in range(20):
+            if FindWindow(window, window) != None:
+                return True
+            else:
+                time.sleep(0.5)
+        return False
 
     def setUp(self):
         self.app = None
@@ -133,11 +142,12 @@ class TestSuite_z_opening_file(unittest.TestCase):
     #@unittest.skip('pass')
     def test_zb_open_metadata_file(self):
         os.popen(r'c:\Users\an.kravets\Desktop\MetaData_File.pdf')
+        self.find_window('Печать')
         time.sleep(1)
-        #WaitUntilPasses(10, 0.5, lambda: self.app.window(title=u'Печать'))
         handle = GetForegroundWindow()
         self.app = Application().connect(handle = handle)
-        time.sleep(1)
+        time.sleep(2)
+        self.app.wait('ready', 10, 0.5)
         first_element = 0
         assert self.app.top_window().texts()[first_element] in 'Печать'
         assert self.app.top_window()['&Имя:ComboBox'].SelectedText()[first_element] in 'Microsoft Print to PDF'
@@ -148,13 +158,14 @@ class TestSuite_z_opening_file(unittest.TestCase):
     #@unittest.skip('pass')
     def test_zc_open_file_without_metadata(self):
         os.popen(r'c:\Users\an.kravets\Desktop\File.pdf')
-        time.sleep(1)
-        #WaitUntilPasses(10, 0.5, lambda: self.app.window(title=u'File.pdf - Foxit Reader'))
+        self.find_window('File.pdf - Adobe Acrobat Reader DC')
+
         handle = GetForegroundWindow()
         self.app = Application().connect(handle=handle)
-        time.sleep(1)
+        time.sleep(2)
+        #self.app.top_window().wait('ready', 10, 0.5)
         first_element = 0
-        assert self.app.top_window().texts()[first_element] in 'File.pdf - Foxit Reader'
+        assert self.app.top_window().texts()[first_element] in 'File.pdf - Adobe Acrobat Reader DC'
 
 
 
