@@ -146,7 +146,7 @@ class TestSuite_z_opening_file(unittest.TestCase):
         time.sleep(1)
         handle = GetForegroundWindow()
         self.app = Application().connect(handle = handle)
-        time.sleep(2)
+        time.sleep(1)
         self.app.wait('ready', 10, 0.5)
         first_element = 0
         assert self.app.top_window().texts()[first_element] in 'Печать'
@@ -159,10 +159,11 @@ class TestSuite_z_opening_file(unittest.TestCase):
     def test_zc_open_file_without_metadata(self):
         os.popen(r'c:\Users\an.kravets\Desktop\File.pdf')
         self.find_window('File.pdf - Adobe Acrobat Reader DC')
+        time.sleep(1)
 
         handle = GetForegroundWindow()
         self.app = Application().connect(handle=handle)
-        time.sleep(2)
+        time.sleep(1)
         #self.app.top_window().wait('ready', 10, 0.5)
         first_element = 0
         assert self.app.top_window().texts()[first_element] in 'File.pdf - Adobe Acrobat Reader DC'
