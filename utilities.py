@@ -90,7 +90,7 @@ def input_text_pattern_ctrl_c(window, text=''):
 
 
 
-
+# TODO check for closed app
 def apply_settings(window):
     window.Apply.wait('enabled').click()
    # if window.is_process_running() is True:
@@ -107,6 +107,8 @@ def type_an_error_report(window, error_text=''):
 def send_error_confirmation_message(window):
     confirm_msg = window.top_window()
     first_element = 0
+    print(confirm_msg.Static.texts())
+    print(confirm_msg.Button.texts())
     assert confirm_msg.Static.texts()[first_element] in 'Message sent'
     assert confirm_msg.Button.texts()[first_element] in 'OK'
 
