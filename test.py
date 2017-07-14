@@ -17,9 +17,6 @@ class TestSuite_settings(unittest.TestCase):
     pdf_reader = 'AcroRd32'
 
 
-
-
-
     def setUp(self):
         try:
             self.app = Application(backend="win32").start(
@@ -28,7 +25,7 @@ class TestSuite_settings(unittest.TestCase):
             self.fail('Another instance of application is running')
         self.main_window = self.app.PDFRedirect
         WaitUntilPasses(10, 0.5, lambda: self.app.window_(title=u'PDFRedirect'))
-        print(self.id())
+        #print(self.id())
 
     #TODO screenshot for fail
     def tearDown(self):
@@ -133,7 +130,7 @@ class TestSuite_z_opening_file(unittest.TestCase):
 
     def setUp(self):
         self.app = None
-        print(self.id())
+        #print(self.id())
 
     def tearDown(self):
         self.app.top_window().close()
@@ -146,8 +143,8 @@ class TestSuite_z_opening_file(unittest.TestCase):
         time.sleep(1)
         handle = GetForegroundWindow()
         self.app = Application().connect(handle = handle)
-        time.sleep(1)
-        self.app.wait('ready', 10, 0.5)
+        #time.sleep(1)
+        self.app.top_window().wait('ready', 10, 0.5)
         first_element = 0
         assert self.app.top_window().texts()[first_element] in 'Печать'
         assert self.app.top_window()['&Имя:ComboBox'].SelectedText()[first_element] in 'Microsoft Print to PDF'
@@ -163,8 +160,8 @@ class TestSuite_z_opening_file(unittest.TestCase):
 
         handle = GetForegroundWindow()
         self.app = Application().connect(handle=handle)
-        time.sleep(1)
-        #self.app.top_window().wait('ready', 10, 0.5)
+        #time.sleep(1)
+        self.app.top_window().wait('ready', 10, 0.5)
         first_element = 0
         assert self.app.top_window().texts()[first_element] in 'File.pdf - Adobe Acrobat Reader DC'
 
@@ -173,4 +170,4 @@ class TestSuite_z_opening_file(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main(verbosity=2)
