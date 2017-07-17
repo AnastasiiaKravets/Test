@@ -10,6 +10,7 @@ from pywinauto.timings import WaitUntilPasses
 
 
 class TestSuite_settings(unittest.TestCase):
+    path_to_app = 'c:\\Users\\an.kravets\Downloads\PDFRedirect\PDFRedirect.exe'
     meta_data = 'Вулиці Вінниці'
     printer_xps = 'Microsoft XPS Document Writer'
     printer_pdf = 'Microsoft Print to PDF'
@@ -19,8 +20,7 @@ class TestSuite_settings(unittest.TestCase):
 
     def setUp(self):
         try:
-            self.app = Application(backend="win32").start(
-                r"c:\Users\an.kravets\Downloads\PDFRedirect\PDFRedirect.exe")
+            self.app = Application(backend="win32").start(self.path_to_app)
         except AppStartError:
             self.fail('Another instance of application is running')
         self.main_window = self.app.PDFRedirect
@@ -96,8 +96,7 @@ class TestSuite_settings(unittest.TestCase):
         if self.app.is_process_running():
             self.fail('The program should be closed')
 
-        self.app = Application(backend="win32").start(
-            r"c:\Users\an.kravets\Downloads\PDFRedirect\PDFRedirect.exe")
+        self.app = Application(backend="win32").start(self.path_to_app)
         self.main_window = self.app.PDFRedirect
         utilities.default_view(self.main_window, self.pdf_reader, self.meta_data, self.printer_pdf, 'A4', '',
                                'Default')
@@ -112,7 +111,7 @@ class TestSuite_settings(unittest.TestCase):
         utilities.send_error_confirmation_message(self.app)
 
 
-    @unittest.skip('pass')
+    #@unittest.skip('pass')
     def test_close_ALT_F4(self):
         self.main_window.close_alt_f4()
         assert self.app.is_process_running() is False
@@ -120,6 +119,10 @@ class TestSuite_settings(unittest.TestCase):
 
 
 class TestSuite_z_opening_file(unittest.TestCase):
+
+    path = 'c:\\Users\\an.kravets\\Desktop'
+    path_win7 = 'C:\\Users\\root\\Desktop\\'
+
     def find_window(self, window):
         for i in range(20):
             if FindWindow(window, window) != None:
@@ -137,7 +140,9 @@ class TestSuite_z_opening_file(unittest.TestCase):
 
     #@unittest.skip('pass')
     def test_zb_open_metadata_file(self):
-        os.startfile(r'c:\Users\an.kravets\Desktop\MetaData_File.pdf')
+        #os.startfile(self.path + '\MetaData_File.pdf')
+        os.startfile(self.path_win7 + '\MetaData_File.pdf')
+
         self.find_window('Печать')
         time.sleep(1)
         handle = GetForegroundWindow()
@@ -153,7 +158,9 @@ class TestSuite_z_opening_file(unittest.TestCase):
 
     #@unittest.skip('pass')
     def test_zc_open_file_without_metadata(self):
-        os.startfile(r'c:\Users\an.kravets\Desktop\File.pdf')
+        #os.startfile(self.path + '\File.pdf')
+        os.startfile(self.path_win7 + '\File.pdf')
+
         self.find_window('File.pdf - Adobe Acrobat Reader DC')
         time.sleep(1)
 

@@ -168,7 +168,9 @@ def set_default_reader(window, app):
     WaitUntilPasses(10, 0.5, lambda: app.window_(title=u'Select application'))
     select_app = app['Select application']
     path = "c:\Adobe\AcrobatReaderDC\Reader\AcroRd32.exe"
+
     select_app.edit.type_keys(path, with_spaces=True)
+
     select_app.OpenButton.click()
 
     handle_pdf_redirect = GetForegroundWindow()
