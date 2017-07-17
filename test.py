@@ -138,7 +138,7 @@ class TestSuite_z_opening_file(unittest.TestCase):
 
     #@unittest.skip('pass')
     def test_zb_open_metadata_file(self):
-        os.popen(r'c:\Users\an.kravets\Desktop\MetaData_File.pdf')
+        os.startfile(r'c:\Users\an.kravets\Desktop\MetaData_File.pdf')
         self.find_window('Печать')
         time.sleep(1)
         handle = GetForegroundWindow()
@@ -154,7 +154,7 @@ class TestSuite_z_opening_file(unittest.TestCase):
 
     #@unittest.skip('pass')
     def test_zc_open_file_without_metadata(self):
-        os.popen(r'c:\Users\an.kravets\Desktop\File.pdf')
+        os.startfile(r'c:\Users\an.kravets\Desktop\File.pdf')
         self.find_window('File.pdf - Adobe Acrobat Reader DC')
         time.sleep(1)
 
