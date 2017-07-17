@@ -112,7 +112,7 @@ class TestSuite_settings(unittest.TestCase):
         utilities.send_error_confirmation_message(self.app)
 
 
-    #@unittest.skip('pass')
+    @unittest.skip('pass')
     def test_close_ALT_F4(self):
         self.main_window.close_alt_f4()
         assert self.app.is_process_running() is False
