@@ -130,7 +130,6 @@ class TestSuite_z_opening_file(unittest.TestCase):
 
     def setUp(self):
         self.app = None
-        #print(self.id())
 
     def tearDown(self):
         self.app.top_window().close()
