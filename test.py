@@ -1,5 +1,7 @@
 import unittest
 import os
+
+import sys
 from pywinauto.application import Application
 import time
 import utilities
@@ -11,6 +13,7 @@ from pywinauto.timings import WaitUntilPasses
 
 class TestSuite_settings(unittest.TestCase):
     path_to_app = 'c:\\Users\\an.kravets\Downloads\PDFRedirect\PDFRedirect.exe'
+    path_to_app_win_7 = 'C:\Test\PDFRedirect\PDFRedirect.exe'
     meta_data = 'Вулиці Вінниці'
     printer_xps = 'Microsoft XPS Document Writer'
     printer_pdf = 'Microsoft Print to PDF'
@@ -20,27 +23,34 @@ class TestSuite_settings(unittest.TestCase):
 
     def setUp(self):
         try:
-            self.app = Application(backend="win32").start(self.path_to_app)
+            #self.app = Application(backend="win32").start(self.path_to_app)
+            self.app = Application(backend="win32").start(self.path_to_app_win_7)
+
         except AppStartError:
             self.fail('Another instance of application is running')
         self.main_window = self.app.PDFRedirect
+        #print(sys.getwindowsversion())
+
         WaitUntilPasses(10, 0.5, lambda: self.app.window_(title=u'PDFRedirect'))
         #print(self.id())
 
     #TODO screenshot for fail
     def tearDown(self):
-        #if _______]:
-            #self.app.top_window().capture_as_image().save(self.id()+'.png')
-        while True:
-            if self.app.is_process_running():
-                self.app.top_window().close()
-            else:
+        i = 0
+        '''while True:
+            try:
+                    self.app.top_window().close()
+            except:
                 break
+            print(i)
+            i += i'''
+        self.app.kill()
 
 
     #@unittest.skip('pass')
     def test_0_default_view_first_launch(self):
         utilities.default_view(self.main_window)
+
 
     #@unittest.skip('pass')
     def test_set_pdf_reader(self):
@@ -59,6 +69,7 @@ class TestSuite_settings(unittest.TestCase):
 
 
     #@unittest.skip('pass')
+    @unittest.skipIf(sys.getwindowsversion()[0]==6, 'Windows version 7')
     def test_matching_paper_and_printer_settings(self):
         utilities.match_printer_settings(self.main_window)
 
@@ -89,17 +100,19 @@ class TestSuite_settings(unittest.TestCase):
         #self.main_window.print_control_identifiers()
         utilities.set_default_reader(self.main_window, self.app)
         utilities.input_text_pattern(self.main_window, self.meta_data)
-        utilities.select_printer(self.main_window, self.printer_pdf)
-        utilities.select_paper_format(self.main_window, 'A4')
-        utilities.select_duplex(self.main_window, 'Default')
+        utilities.select_printer(self.main_window, self.printer_fax)
+        utilities.select_paper_format(self.main_window, 'A6')
+        utilities.select_duplex(self.main_window, 'Vertical')
         utilities.apply_settings(self.main_window)
-        if self.app.is_process_running():
-            self.fail('The program should be closed')
+        """if self.app.is_process_running():
+            self.fail('The program should be closed')"""
 
-        self.app = Application(backend="win32").start(self.path_to_app)
+        #self.app = Application(backend="win32").start(self.path_to_app)
+        self.app = Application(backend="win32").start(self.path_to_app_win_7)
+
         self.main_window = self.app.PDFRedirect
-        utilities.default_view(self.main_window, self.pdf_reader, self.meta_data, self.printer_pdf, 'A4', '',
-                               'Default')
+        utilities.default_view(self.main_window, self.pdf_reader, self.meta_data, self.printer_fax, 'A6', 'По умолчанию',
+                               'Vertical')
 
 
     #@unittest.skip('pass')
@@ -114,7 +127,7 @@ class TestSuite_settings(unittest.TestCase):
     #@unittest.skip('pass')
     def test_close_ALT_F4(self):
         self.main_window.close_alt_f4()
-        assert self.app.is_process_running() is False
+        """assert self.app.exists(1, 0.5) is False"""
 
 
 
@@ -135,7 +148,8 @@ class TestSuite_z_opening_file(unittest.TestCase):
         self.app = None
 
     def tearDown(self):
-        self.app.top_window().close()
+        #self.app.top_window().close()
+        self.app.kill()
 
 
     #@unittest.skip('pass')
