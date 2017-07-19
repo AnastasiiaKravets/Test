@@ -1,5 +1,6 @@
 import unittest
 import os
+import subprocess
 
 import sys
 from pywinauto.application import Application
@@ -27,11 +28,12 @@ class TestSuite_settings(unittest.TestCase):
             self.app = Application(backend="win32").start(self.path_to_app_win_7)
 
         except AppStartError:
-            self.fail('Another instance of application is running')
+            self.fail('The application can not start')
+        WaitUntilPasses(10, 0.5, lambda: self.app.window_(title=u'PDFRedirect'))
         self.main_window = self.app.PDFRedirect
         #print(sys.getwindowsversion())
 
-        WaitUntilPasses(10, 0.5, lambda: self.app.window_(title=u'PDFRedirect'))
+
         #print(self.id())
 
     #TODO screenshot for fail
@@ -97,7 +99,6 @@ class TestSuite_settings(unittest.TestCase):
 
     #@unittest.skip('pass')
     def test_z_apply_settings(self):
-        #self.main_window.print_control_identifiers()
         utilities.set_default_reader(self.main_window, self.app)
         utilities.input_text_pattern(self.main_window, self.meta_data)
         utilities.select_printer(self.main_window, self.printer_fax)
@@ -155,7 +156,11 @@ class TestSuite_z_opening_file(unittest.TestCase):
     #@unittest.skip('pass')
     def test_zb_open_metadata_file(self):
         #os.startfile(self.path + '\MetaData_File.pdf')
-        os.startfile(self.path_win7 + '\MetaData_File.pdf')
+        #subprocess.Popen("%s %s" % (TestSuite_settings.path_to_app, self.path+'\MetaData_File.pdf'))
+        subprocess.Popen("%s %s" % (TestSuite_settings.path_to_app_win_7, self.path_win7+'\MetaData_File.pdf'))
+
+
+        time.sleep(2)
 
         self.find_window('Печать')
         time.sleep(1)
@@ -165,15 +170,16 @@ class TestSuite_z_opening_file(unittest.TestCase):
         self.app.top_window().wait('ready', 10, 0.5)
         first_element = 0
         assert self.app.top_window().texts()[first_element] in 'Печать'
-        assert self.app.top_window()['&Имя:ComboBox'].SelectedText()[first_element] in 'Microsoft Print to PDF'
-        #app.Dialog.Button0.click()
-        #app.top_window().print_control_identifiers()
+        assert self.app.top_window()['&Имя:ComboBox'].SelectedText()[first_element] in 'Fax'
+
 
 
     #@unittest.skip('pass')
     def test_zc_open_file_without_metadata(self):
-        #os.startfile(self.path + '\File.pdf')
-        os.startfile(self.path_win7 + '\File.pdf')
+        #subprocess.Popen("%s %s" % (TestSuite_settings.path_to_app, self.path+'\File.pdf'))
+        subprocess.Popen("%s %s" % (TestSuite_settings.path_to_app_win_7, self.path_win7+'\File.pdf'))
+
+
 
         self.find_window('File.pdf - Adobe Acrobat Reader DC')
         time.sleep(1)
