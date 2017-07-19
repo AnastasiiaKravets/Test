@@ -29,8 +29,10 @@ class TestSuite_settings(unittest.TestCase):
 
         except AppStartError:
             self.fail('The application can not start')
-        WaitUntilPasses(10, 0.5, lambda: self.app.window_(title=u'PDFRedirect'))
-        self.main_window = self.app.PDFRedirect
+        if self.app.PDFRedirect.exists(10, 0.5):
+            self.main_window = self.app.PDFRedirect
+        else:
+            self.fail('The application is not visible')
         #print(sys.getwindowsversion())
 
 
@@ -48,9 +50,13 @@ class TestSuite_settings(unittest.TestCase):
             i += i'''
         self.app.kill()
 
+    #@unittest.skip('pass')
+    def test_0_clean_register(self):
+        utilities.clean_register()
+
 
     #@unittest.skip('pass')
-    def test_0_default_view_first_launch(self):
+    def test_1_default_view_first_launch(self):
         utilities.default_view(self.main_window)
 
 

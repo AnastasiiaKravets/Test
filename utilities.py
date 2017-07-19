@@ -2,6 +2,24 @@ from pywinauto.application import Application
 import time
 from win32gui import GetForegroundWindow
 from pywinauto.timings import WaitUntilPasses
+import winreg
+
+
+def clean_register():
+    key_name = r'Software\PDFRedirect\Settings'
+    key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, key_name, 0, winreg.KEY_ALL_ACCESS)
+    try:
+        winreg.DeleteKey(key, 'DefaultPdfProgram')
+    except:
+        pass
+    try:
+        winreg.DeleteKey(key, 'PrinterSettings')
+    except:
+        pass
+    try:
+        winreg.DeleteKey(key, 'TextPattern')
+    except:
+        pass
 
 
 
