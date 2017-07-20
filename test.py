@@ -105,7 +105,6 @@ class TestSuite_settings(unittest.TestCase):
         except Error:
             pass
 
-
     #@unittest.skip('pass')
     def test_z_apply_settings(self):
         utilities.set_default_reader(self.main_window, self.app)
