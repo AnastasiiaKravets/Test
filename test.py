@@ -1,5 +1,8 @@
 import unittest
 import os
+import subprocess
+
+import sys
 from pywinauto.application import Application
 import time
 import utilities
@@ -10,6 +13,8 @@ from pywinauto.timings import WaitUntilPasses
 
 
 class TestSuite_settings(unittest.TestCase):
+    path_to_app = 'c:\\Users\\an.kravets\Downloads\PDFRedirect\PDFRedirect.exe'
+    path_to_app_win_7 = 'C:\Test\PDFRedirect\PDFRedirect.exe'
     meta_data = 'Вулиці Вінниці'
     printer_xps = 'Microsoft XPS Document Writer'
     printer_pdf = 'Microsoft Print to PDF'
@@ -19,28 +24,45 @@ class TestSuite_settings(unittest.TestCase):
 
     def setUp(self):
         try:
-            self.app = Application(backend="win32").start(
-                r"c:\Users\an.kravets\Downloads\PDFRedirect\PDFRedirect.exe")
+            #self.app = Application(backend="win32").start(self.path_to_app)
+            self.app = Application(backend="win32").start(self.path_to_app_win_7)
+
         except AppStartError:
-            self.fail('Another instance of application is running')
+            self.fail('The application can not start')
+        """if self.app.PDFRedirect.exists(10, 0.5):
+            self.main_window = self.app.PDFRedirect
+        else:
+            self.fail('The application is not visible')"""
+        try:
+            self.app.PDFRedirect.wait('ready', 20, 0.5)
+        except:
+            self.fail('The application can not start2')
         self.main_window = self.app.PDFRedirect
-        WaitUntilPasses(10, 0.5, lambda: self.app.window_(title=u'PDFRedirect'))
+
+        #print(sys.getwindowsversion())
         #print(self.id())
 
     #TODO screenshot for fail
     def tearDown(self):
-        #if _______]:
-            #self.app.top_window().capture_as_image().save(self.id()+'.png')
-        while True:
-            if self.app.is_process_running():
-                self.app.top_window().close()
-            else:
+        i = 0
+        '''while True:
+            try:
+                    self.app.top_window().close()
+            except:
                 break
+            print(i)
+            i += i'''
+        self.app.kill()
+
+    #@unittest.skip('pass')
+    def test_0_clean_register(self):
+        utilities.clean_register()
 
 
     #@unittest.skip('pass')
-    def test_0_default_view_first_launch(self):
+    def test_1_default_view_first_launch(self):
         utilities.default_view(self.main_window)
+
 
     #@unittest.skip('pass')
     def test_set_pdf_reader(self):
@@ -59,6 +81,7 @@ class TestSuite_settings(unittest.TestCase):
 
 
     #@unittest.skip('pass')
+    @unittest.skipIf(sys.getwindowsversion()[0]==6, 'Windows version 7')
     def test_matching_paper_and_printer_settings(self):
         utilities.match_printer_settings(self.main_window)
 
@@ -83,24 +106,23 @@ class TestSuite_settings(unittest.TestCase):
             pass
 
 
-
     #@unittest.skip('pass')
     def test_z_apply_settings(self):
-        #self.main_window.print_control_identifiers()
         utilities.set_default_reader(self.main_window, self.app)
         utilities.input_text_pattern(self.main_window, self.meta_data)
-        utilities.select_printer(self.main_window, self.printer_pdf)
-        utilities.select_paper_format(self.main_window, 'A4')
-        utilities.select_duplex(self.main_window, 'Default')
+        utilities.select_printer(self.main_window, self.printer_fax)
+        utilities.select_paper_format(self.main_window, 'A6')
+        utilities.select_duplex(self.main_window, 'Vertical')
         utilities.apply_settings(self.main_window)
-        if self.app.is_process_running():
-            self.fail('The program should be closed')
+        """if self.app.is_process_running():
+            self.fail('The program should be closed')"""
 
-        self.app = Application(backend="win32").start(
-            r"c:\Users\an.kravets\Downloads\PDFRedirect\PDFRedirect.exe")
+        #self.app = Application(backend="win32").start(self.path_to_app)
+        self.app = Application(backend="win32").start(self.path_to_app_win_7)
+
         self.main_window = self.app.PDFRedirect
-        utilities.default_view(self.main_window, self.pdf_reader, self.meta_data, self.printer_pdf, 'A4', '',
-                               'Default')
+        utilities.default_view(self.main_window, self.pdf_reader, self.meta_data, self.printer_fax, 'A6', 'По умолчанию',
+                               'Vertical')
 
 
     #@unittest.skip('pass')
@@ -112,14 +134,18 @@ class TestSuite_settings(unittest.TestCase):
         utilities.send_error_confirmation_message(self.app)
 
 
-    @unittest.skip('pass')
+    #@unittest.skip('pass')
     def test_close_ALT_F4(self):
         self.main_window.close_alt_f4()
-        assert self.app.is_process_running() is False
+        """assert self.app.exists(1, 0.5) is False"""
 
 
 
 class TestSuite_z_opening_file(unittest.TestCase):
+
+    path = 'c:\\Users\\an.kravets\\Desktop'
+    path_win7 = 'C:\\Users\\root\\Desktop\\'
+
     def find_window(self, window):
         for i in range(20):
             if FindWindow(window, window) != None:
@@ -132,12 +158,19 @@ class TestSuite_z_opening_file(unittest.TestCase):
         self.app = None
 
     def tearDown(self):
-        self.app.top_window().close()
+        #self.app.top_window().close()
+        self.app.kill()
 
 
     #@unittest.skip('pass')
     def test_zb_open_metadata_file(self):
-        os.startfile(r'c:\Users\an.kravets\Desktop\MetaData_File.pdf')
+        #os.startfile(self.path + '\MetaData_File.pdf')
+        #subprocess.Popen("%s %s" % (TestSuite_settings.path_to_app, self.path+'\MetaData_File.pdf'))
+        subprocess.Popen("%s %s" % (TestSuite_settings.path_to_app_win_7, self.path_win7+'\MetaData_File.pdf'))
+
+
+        time.sleep(2)
+
         self.find_window('Печать')
         time.sleep(1)
         handle = GetForegroundWindow()
@@ -146,14 +179,17 @@ class TestSuite_z_opening_file(unittest.TestCase):
         self.app.top_window().wait('ready', 10, 0.5)
         first_element = 0
         assert self.app.top_window().texts()[first_element] in 'Печать'
-        assert self.app.top_window()['&Имя:ComboBox'].SelectedText()[first_element] in 'Microsoft Print to PDF'
-        #app.Dialog.Button0.click()
-        #app.top_window().print_control_identifiers()
+        assert self.app.top_window()['&Имя:ComboBox'].SelectedText()[first_element] in 'Fax'
+
 
 
     #@unittest.skip('pass')
     def test_zc_open_file_without_metadata(self):
-        os.startfile(r'c:\Users\an.kravets\Desktop\File.pdf')
+        #subprocess.Popen("%s %s" % (TestSuite_settings.path_to_app, self.path+'\File.pdf'))
+        subprocess.Popen("%s %s" % (TestSuite_settings.path_to_app_win_7, self.path_win7+'\File.pdf'))
+
+
+
         self.find_window('File.pdf - Adobe Acrobat Reader DC')
         time.sleep(1)
 

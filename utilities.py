@@ -2,7 +2,24 @@ from pywinauto.application import Application
 import time
 from win32gui import GetForegroundWindow
 from pywinauto.timings import WaitUntilPasses
-import unittest
+import winreg
+
+
+def clean_register():
+    key_name = r'Software\PDFRedirect\Settings'
+    key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, key_name, 0, winreg.KEY_ALL_ACCESS)
+    try:
+        winreg.DeleteKey(key, 'DefaultPdfProgram')
+    except:
+        pass
+    try:
+        winreg.DeleteKey(key, 'PrinterSettings')
+    except:
+        pass
+    try:
+        winreg.DeleteKey(key, 'TextPattern')
+    except:
+        pass
 
 
 
@@ -29,11 +46,11 @@ def default_view(window, name_edit='',
     apply_button = window.Button2
     apply_button_text = 'Apply'
     open_button = window.Button3
-    window_widght = 448
-    window_height = 359
+    #window_widght = 448
+    #window_height = 359
 
-    assert window.rectangle().width() == window_widght
-    assert window.rectangle().height() == window_height
+    #assert window.rectangle().width() == window_widght
+    #assert window.rectangle().height() == window_height
     assert window.Settings.texts()[first_element] in settings_static
     assert window['Default PDF program'].texts()[first_element] in default_pdf_program_static
     assert window['Name:Static'].texts()[first_element] in name_static
@@ -103,7 +120,7 @@ def type_an_error_report(window, error_text=''):
 def send_error_confirmation_message(window):
     confirm_msg = window.top_window()
     first_element = 0
-    assert confirm_msg.Static2.texts()[first_element] in 'Message sent.'
+    assert confirm_msg.Static.texts()[first_element] in 'Message sent.'
     assert confirm_msg.Button.texts()[first_element]in 'ОК'
     confirm_msg.Button.click()
 
@@ -168,7 +185,9 @@ def set_default_reader(window, app):
     WaitUntilPasses(10, 0.5, lambda: app.window_(title=u'Select application'))
     select_app = app['Select application']
     path = "c:\Adobe\AcrobatReaderDC\Reader\AcroRd32.exe"
+
     select_app.edit.type_keys(path, with_spaces=True)
+
     select_app.OpenButton.click()
 
     handle_pdf_redirect = GetForegroundWindow()
