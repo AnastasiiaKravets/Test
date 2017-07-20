@@ -29,13 +29,17 @@ class TestSuite_settings(unittest.TestCase):
 
         except AppStartError:
             self.fail('The application can not start')
-        if self.app.PDFRedirect.exists(10, 0.5):
+        """if self.app.PDFRedirect.exists(10, 0.5):
             self.main_window = self.app.PDFRedirect
         else:
-            self.fail('The application is not visible')
+            self.fail('The application is not visible')"""
+        try:
+            self.app.PDFRedirect.wait('ready', 20, 0.5)
+        except:
+            self.fail('The application can not start2')
+        self.main_window = self.app.PDFRedirect
+
         #print(sys.getwindowsversion())
-
-
         #print(self.id())
 
     #TODO screenshot for fail
