@@ -139,7 +139,6 @@ class TestSuite_settings(unittest.TestCase):
         """assert self.app.exists(1, 0.5) is False"""
 
 
-
 class TestSuite_z_opening_file(unittest.TestCase):
 
     path = 'c:\\Users\\an.kravets\\Desktop'
